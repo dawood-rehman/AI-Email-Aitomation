@@ -1,2 +1,2 @@
 # Email_Marketing_tool
-It is an AI Email marketing tool 
+It is an AI Email Automation tool 

@@ -14,7 +14,26 @@ import {
   setIsBulkEmail,
   clearDraft,
 } from "@/store/emailDraftSlice";
-import { FiSettings, FiLogOut, FiUser, FiMail, FiUsers, FiSend, FiEdit, FiX, FiSave, FiCheck } from "react-icons/fi";
+import {
+  FiCheck,
+  FiEdit,
+  FiFileText,
+  FiGrid,
+  FiInfo,
+  FiList,
+  FiLogOut,
+  FiMail,
+  FiPlus,
+  FiSave,
+  FiSearch,
+  FiSend,
+  FiSettings,
+  FiTrash2,
+  FiUploadCloud,
+  FiUser,
+  FiUsers,
+  FiX,
+} from "react-icons/fi";
 import { HiOutlineSparkles } from "react-icons/hi";
 
 const generateId = () => {
@@ -95,7 +114,7 @@ export default function HomePage() {
     {
       role: "assistant",
       content:
-        "Hello! I’m here to help you write high-impact marketing emails. Whether it's a discount, new service, or brand update.",
+        "Hello! I'm here to help you write high-impact marketing emails. Whether it's a discount, new service, or brand update.",
       timestamp: new Date(),
     },
   ]);
@@ -901,7 +920,7 @@ export default function HomePage() {
 
       // Update status
       if (successCount === currentDraft.selectedContacts.length) {
-        setSendStatus(`✓ All emails sent successfully! (${successCount} sent)`);
+        setSendStatus(`All emails sent successfully! (${successCount} sent)`);
         setCurrentDraft(null);
         clearContactSelection();
         dispatch(clearDraft());
@@ -963,7 +982,7 @@ export default function HomePage() {
         setSendStatus(`Failed: ${data.error || "Unknown error"}`);
       } else {
         setSmtpConfigError(null);
-        setSendStatus("Email sent successfully! ✓");
+        setSendStatus("Email sent successfully!");
         setCurrentDraft(null);
         clearContactSelection();
         dispatch(clearDraft());
@@ -1076,41 +1095,41 @@ export default function HomePage() {
         </div>
       </header>
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="bg-white/90 backdrop-blur border border-white/60 rounded-2xl p-4 shadow-lg">
+      <section className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <div className="bg-white/90 backdrop-blur border border-white/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg">
             <p className="text-xs uppercase tracking-wider text-slate-500">Contacts</p>
-            <p className="text-3xl font-semibold text-slate-900 mt-2">{contacts.length}</p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-2xl sm:text-3xl font-semibold text-slate-900 mt-2">{contacts.length}</p>
+            <p className="hidden sm:block text-xs text-slate-500 mt-1">
               {filteredContacts.length !== contacts.length
                 ? `${filteredContacts.length} visible with current filter`
                 : "Synced from your workplace records"}
             </p>
           </div>
-          <div className="bg-white/90 backdrop-blur border border-white/60 rounded-2xl p-4 shadow-lg">
+          <div className="bg-white/90 backdrop-blur border border-white/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg">
             <p className="text-xs uppercase tracking-wider text-slate-500">Selected</p>
-            <p className="text-3xl font-semibold text-slate-900 mt-2">{selectedContacts.length}</p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-2xl sm:text-3xl font-semibold text-slate-900 mt-2">{selectedContacts.length}</p>
+            <p className="hidden sm:block text-xs text-slate-500 mt-1">
               {selectedContacts.length > 0
                 ? "Ready for bulk personalization"
                 : "Select contacts to activate bulk send"}
             </p>
           </div>
-          <div className="bg-gradient-to-br from-emerald-500 via-teal-600 to-violet-600 text-white rounded-2xl p-4 shadow-xl">
+          <div className="bg-gradient-to-br from-emerald-500 via-teal-600 to-violet-600 text-white rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-xl">
             <p className="text-xs uppercase tracking-wider opacity-80">Draft Status</p>
-            <p className="text-2xl font-semibold mt-2">{currentDraft ? "Draft Ready" : "Awaiting prompt"}</p>
-            <p className="text-xs opacity-80 mt-1 line-clamp-2">
-              {currentDraft ? currentDraft.subject || "Personalized email prepared" : "Describe what you’d like to send"}
+            <p className="text-lg sm:text-2xl font-semibold mt-2">{currentDraft ? "Draft Ready" : "Awaiting prompt"}</p>
+            <p className="hidden sm:block text-xs opacity-80 mt-1 line-clamp-2">
+              {currentDraft ? currentDraft.subject || "Personalized email prepared" : "Describe what you'd like to send"}
             </p>
           </div>
-          <div className="bg-white/90 backdrop-blur border border-white/60 rounded-2xl p-4 shadow-lg flex flex-col justify-between">
+          <div className="bg-white/90 backdrop-blur border border-white/60 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg flex flex-col justify-between">
             <div>
               <p className="text-xs uppercase tracking-wider text-slate-500">Assistant</p>
-              <p className="text-2xl font-semibold text-slate-900 mt-2">
+              <p className="text-lg sm:text-2xl font-semibold text-slate-900 mt-2">
                 {isGenerating ? "Crafting emails..." : "Standing by"}
               </p>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="hidden sm:block text-xs text-slate-500 mt-1">
               {messages[messages.length - 1]?.role === "assistant"
                 ? messages[messages.length - 1].content.slice(0, 60)
                 : "Ask anything about your team communications"}
@@ -1122,9 +1141,9 @@ export default function HomePage() {
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Left Sidebar - Contact Management */}
-          <div className="lg:col-span-1 space-y-3 sm:space-y-4 order-2 lg:order-1">
+          <div className="lg:col-span-1 space-y-3 sm:space-y-4 order-1">
             {/* Add Contact Card */}
-            <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-4 sm:p-5 border border-gray-100">
+            <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-3 sm:p-5 border border-gray-100">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2 mb-4">
                 <h2 className="text-base sm:text-lg font-semibold text-gray-800">
                   Contact Management
@@ -1134,20 +1153,28 @@ export default function HomePage() {
                     onClick={() => setShowSpreadsheet(!showSpreadsheet)}
                     className="flex-1 sm:flex-initial text-violet-600 hover:text-violet-700 text-xs sm:text-sm font-medium px-3 py-2 sm:py-1.5 rounded-lg hover:bg-violet-50 active:bg-violet-100 transition-colors min-h-[44px] sm:min-h-0"
                   >
-                    {showSpreadsheet ? "📋 List" : "📊 Sheet"}
+                    <span className="inline-flex items-center justify-center gap-1.5">
+                      {showSpreadsheet ? <FiList /> : <FiGrid />}
+                      {showSpreadsheet ? "List" : "Sheet"}
+                    </span>
                   </button>
                   <button
                     onClick={() => setShowContactForm(!showContactForm)}
                     className="flex-1 sm:flex-initial text-emerald-600 hover:text-emerald-700 text-xs sm:text-sm font-medium px-3 py-2 sm:py-1.5 rounded-lg hover:bg-emerald-50 active:bg-emerald-100 transition-colors min-h-[44px] sm:min-h-0"
                   >
-                    {showContactForm ? "Cancel" : "+ Add"}
+                    <span className="inline-flex items-center justify-center gap-1.5">
+                      {showContactForm ? <FiX /> : <FiPlus />}
+                      {showContactForm ? "Cancel" : "Add"}
+                    </span>
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2 mb-4">
                 <label className="text-xs sm:text-sm font-medium text-gray-600 flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-violet-50 text-violet-600 text-xs">🔎</span>
+                  <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-violet-50 text-violet-600 text-xs">
+                    <FiSearch />
+                  </span>
                   Find a teammate
                 </label>
                 <div className="relative">
@@ -1191,7 +1218,12 @@ export default function HomePage() {
                       <span className="text-xs sm:text-sm text-gray-600 font-medium">
                         {uploadLoading
                           ? "Uploading..."
-                          : "📁 Choose Excel File"}
+                          : (
+                            <span className="inline-flex items-center gap-2">
+                              <FiUploadCloud />
+                              Choose Excel File
+                            </span>
+                          )}
                       </span>
                     </div>
                   </label>
@@ -1259,9 +1291,9 @@ export default function HomePage() {
             </div>
 
             {/* Contacts List or Spreadsheet */}
-            <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-4 sm:p-5 border border-gray-100">
-              <div className="flex items-center justify-between mb-3 sm:mb-4">
-                <div className="flex items-center gap-2 sm:gap-3">
+            <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-3 sm:p-5 border border-gray-100">
+              <div className="flex flex-col gap-3 mb-3 sm:mb-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   {!showSpreadsheet && contacts.length > 0 && (
                     <label className="flex items-center cursor-pointer">
                       <input
@@ -1301,7 +1333,10 @@ export default function HomePage() {
                     disabled={editingRow === "new"}
                       className="text-xs sm:text-sm bg-green-600 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg hover:bg-green-700 active:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[36px] sm:min-h-0 font-medium shadow-sm"
                   >
-                    + Add Row
+                    <span className="inline-flex items-center gap-1">
+                      <FiPlus />
+                      Add Row
+                    </span>
                   </button>
                 )}
                 </div>
@@ -1330,16 +1365,16 @@ export default function HomePage() {
               ) : !showSpreadsheet && filteredContacts.length === 0 ? (
                 contactSearch ? (
                   <div className="text-center py-10">
-                    <div className="text-gray-400 text-5xl sm:text-6xl mb-3">🔍</div>
+                    <FiSearch className="mx-auto mb-3 text-5xl sm:text-6xl text-gray-300" />
                     <p className="text-sm sm:text-base text-gray-500 px-2">
-                      No contacts match “{contactSearch}”.
+                      No contacts match "{contactSearch}".
                       <br />
                       Try a different name or clear the search filter.
                     </p>
                   </div>
                 ) : (
                 <div className="text-center py-8 sm:py-10">
-                  <div className="text-gray-400 text-5xl sm:text-6xl mb-3">👥</div>
+                  <FiUsers className="mx-auto mb-3 text-5xl sm:text-6xl text-gray-300" />
                   <p className="text-sm sm:text-base text-gray-500 px-2">
                     No contacts yet.
                     <br />
@@ -1401,15 +1436,17 @@ export default function HomePage() {
                           </td>
                           <td className="border border-gray-300 px-2 sm:px-3 py-2">
                             <div className="flex gap-1">
-                              <button
-                                onClick={handleSaveNewRow}
-                                disabled={saving}
+                               <button
+                                 onClick={handleSaveNewRow}
+                                 disabled={saving}
+                                 aria-label="Save new contact"
+                                 title="Save new contact"
                                 className="px-2 sm:px-2.5 py-1.5 sm:py-1 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 active:bg-green-800 disabled:opacity-50 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
                               >
-                                ✓
+                                <FiCheck />
                               </button>
-                              <button
-                                onClick={() => {
+                               <button
+                                 onClick={() => {
                                   setEditingRow(null);
                                   setNewRow({
                                     name: "",
@@ -1420,10 +1457,12 @@ export default function HomePage() {
                                       primary: false,
                                     },
                                   });
-                                }}
+                                 }}
+                                 aria-label="Cancel new contact"
+                                 title="Cancel"
                                 className="px-2 sm:px-2.5 py-1.5 sm:py-1 bg-gray-500 text-white text-xs rounded-lg hover:bg-gray-600 active:bg-gray-700 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
                               >
-                                ✕
+                                <FiX />
                               </button>
                             </div>
                           </td>
@@ -1442,9 +1481,10 @@ export default function HomePage() {
                           }
                         >
                           <td className="border border-gray-300 px-2 sm:px-3 py-2">
-                            <input
-                              type="checkbox"
-                              checked={selectedContacts.includes(contact._id)}
+                           <input
+                             type="checkbox"
+                             checked={selectedContacts.includes(contact._id)}
+                             aria-label={`Select ${contact.name}`}
                               onChange={(e) => {
                                 e.stopPropagation();
                                 handleSelectContact(contact._id);
@@ -1495,33 +1535,41 @@ export default function HomePage() {
                           <td className="border border-gray-300 px-2 sm:px-3 py-2">
                             {editingRow === contact._id ? (
                               <div className="flex gap-1">
-                                <button
-                                  onClick={() => handleSaveRow(contact._id)}
-                                  disabled={saving}
+                                 <button
+                                   onClick={() => handleSaveRow(contact._id)}
+                                   disabled={saving}
+                                   aria-label={`Save ${contact.name}`}
+                                   title="Save changes"
                                   className="px-2 sm:px-2.5 py-1.5 sm:py-1 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700 active:bg-emerald-800 disabled:opacity-50 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
                                 >
-                                  ✓
+                                  <FiCheck />
                                 </button>
-                                <button
-                                  onClick={() => handleCancelEdit(contact._id)}
+                                 <button
+                                   onClick={() => handleCancelEdit(contact._id)}
+                                   aria-label={`Cancel editing ${contact.name}`}
+                                   title="Cancel"
                                   className="px-2 sm:px-2.5 py-1.5 sm:py-1 bg-gray-500 text-white text-xs rounded-lg hover:bg-gray-600 active:bg-gray-700 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
                                 >
-                                  ✕
+                                  <FiX />
                                 </button>
                               </div>
                             ) : (
                               <div className="flex gap-1">
-                                <button
-                                  onClick={() => handleEditRow(contact._id)}
+                                 <button
+                                   onClick={() => handleEditRow(contact._id)}
+                                   aria-label={`Edit ${contact.name}`}
+                                   title="Edit contact"
                                   className="px-2 sm:px-2.5 py-1.5 sm:py-1 bg-emerald-600 text-white text-xs rounded-lg hover:bg-emerald-700 active:bg-emerald-800 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
                                 >
-                                  ✏️
+                                  <FiEdit />
                                 </button>
-                                <button
-                                  onClick={() => openDeleteDialog(contact, "sheet")}
+                                 <button
+                                   onClick={() => openDeleteDialog(contact, "sheet")}
+                                   aria-label={`Delete ${contact.name}`}
+                                   title="Delete contact"
                                   className="px-2 sm:px-2.5 py-1.5 sm:py-1 bg-red-600 text-white text-xs rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
                                 >
-                                  🗑️
+                                  <FiTrash2 />
                                 </button>
                               </div>
                             )}
@@ -1559,8 +1607,9 @@ export default function HomePage() {
                             onChange={(e) => {
                               e.stopPropagation();
                               handleSelectContact(contact._id);
-                            }}
-                            onClick={(e) => e.stopPropagation()}
+                             }}
+                             onClick={(e) => e.stopPropagation()}
+                             aria-label={`Select ${contact.name}`}
                             className="mt-1 w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-2 focus:ring-emerald-500 cursor-pointer flex-shrink-0"
                           />
                         <div className="flex-1 min-w-0">
@@ -1595,11 +1644,13 @@ export default function HomePage() {
                           )}
                         </div>
                         <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openDeleteDialog(contact, "list");
-                            }}
-                            className="ml-2 text-red-500 hover:text-red-700 active:text-red-800 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-medium px-2 py-1 rounded hover:bg-red-50 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               openDeleteDialog(contact, "list");
+                             }}
+                             aria-label={`Delete ${contact.name}`}
+                             title="Delete contact"
+                            className="ml-2 text-red-500 hover:text-red-700 active:text-red-800 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-xs font-medium px-2 py-1 rounded hover:bg-red-50 min-w-[44px] min-h-[44px] flex items-center justify-center"
                         >
                           Delete
                         </button>
@@ -1612,8 +1663,8 @@ export default function HomePage() {
           </div>
 
           {/* Right Side - AI Chat Assistant */}
-          <div className="lg:col-span-2 order-1 lg:order-2 space-y-4 sm:space-y-6 flex flex-col min-h-0">
-            <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 flex flex-col flex-1 min-h-0 max-h-[calc(100vh-240px)] sm:max-h-[calc(100vh-220px)] lg:max-h-[calc(100vh-180px)]">
+          <div className="lg:col-span-2 order-2 space-y-4 sm:space-y-6 flex flex-col min-h-0">
+            <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 flex flex-col h-[70svh] min-h-[30rem] lg:h-[calc(100vh-180px)] lg:max-h-[calc(100vh-180px)]">
               {/* Chat Header */}
               <div className="border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-t-xl">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -1649,7 +1700,7 @@ export default function HomePage() {
                           className="text-gray-500 hover:text-gray-700 text-sm px-2 py-1 rounded hover:bg-white/50 transition-colors"
                           title="Clear selection"
                         >
-                          ✕
+                          <FiX />
                       </button>
                   </div>
                 )}
@@ -1706,7 +1757,7 @@ export default function HomePage() {
                   <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 sm:p-5 mt-3 sm:mt-4">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 mb-3 sm:mb-4">
                       <h3 className="font-semibold text-sm sm:text-base text-gray-800 flex items-center gap-2">
-                        <span className="text-green-600">✉️</span> Email Draft
+                        <FiFileText className="text-green-600" /> Email Draft
                       </h3>
                       <span className="text-xs text-gray-500 bg-white px-2.5 py-1 rounded-full border border-green-200 w-fit">
                         Ready to send
@@ -1907,7 +1958,7 @@ export default function HomePage() {
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     placeholder="Type your message..."
-                    className="flex-1 border border-gray-300 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+                    className="min-w-0 flex-1 border border-gray-300 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
                     disabled={isGenerating}
                   />
                   <button
@@ -1923,7 +1974,8 @@ export default function HomePage() {
                   </button>
                 </form>
                 <p className="text-xs text-gray-400 mt-2 px-1 hidden sm:block">
-                  💡 Tip: Mention or select the employee name and what you want to communicate. The AI will generate a professional email.
+                  <FiInfo className="mr-1 inline" />
+                  Tip: Mention or select the employee name and what you want to communicate. The AI will generate a professional email.
                 </p>
               </div>
             </div>
@@ -1932,9 +1984,9 @@ export default function HomePage() {
       </main>
 
       {deleteDialog.open && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 sm:p-4">
           <div className="absolute inset-0 bg-stone-950/70 backdrop-blur-sm" onClick={deleteDialog.loading ? undefined : closeDeleteDialog}></div>
-          <div className="relative bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-sm w-full p-6 space-y-4 animate-fadeIn">
+          <div className="relative bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-sm w-full p-4 sm:p-6 space-y-4 animate-fadeIn">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-lg">
                 !
@@ -1958,14 +2010,14 @@ export default function HomePage() {
               <button
                 onClick={closeDeleteDialog}
                 disabled={deleteDialog.loading}
-                className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
+                className="min-h-[44px] px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDeleteContact}
                 disabled={deleteDialog.loading}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 disabled:opacity-50 inline-flex items-center gap-2"
+                className="min-h-[44px] px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 disabled:opacity-50 inline-flex items-center gap-2"
               >
                 {deleteDialog.loading && (
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>

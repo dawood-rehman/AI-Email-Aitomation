@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "MailForge — AI Email Marketing",
+  title: "MailForge | AI Email Automation",
   description:
-    "AI-powered email marketing assistant. Generate professional campaigns, manage contacts, and send bulk emails effortlessly.",
+    "AI-powered email automation assistant. Generate professional campaigns, manage contacts, and send bulk emails effortlessly.",
 };
 
 export default function RootLayout({ children }) {

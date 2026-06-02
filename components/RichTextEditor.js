@@ -51,7 +51,7 @@ export default function RichTextEditor({ value, onChange, placeholder, className
 
   if (!isMounted || !editor) {
     return (
-      <div className={`border border-gray-300 rounded-lg bg-white ${className}`}>
+      <div className={`overflow-hidden border border-gray-300 rounded-lg bg-white ${className}`}>
         <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-200 bg-gray-50 rounded-t-lg">
           <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
           <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
@@ -70,15 +70,15 @@ export default function RichTextEditor({ value, onChange, placeholder, className
   const toggleOrderedList = () => editor.chain().focus().toggleOrderedList().run();
 
   return (
-    <div className={`border border-gray-300 rounded-lg bg-white ${className}`}>
+    <div className={`overflow-hidden border border-gray-300 rounded-lg bg-white transition-shadow focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-transparent ${className}`}>
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-200 bg-gray-50 rounded-t-lg">
         <button
           type="button"
           onClick={toggleBold}
-          className={`px-2 py-1.5 rounded text-sm font-semibold transition-colors ${
+          className={`min-w-9 min-h-9 px-2 py-1.5 rounded text-sm font-semibold transition-colors ${
             editor.isActive("bold")
-              ? "bg-blue-600 text-white"
+              ? "bg-emerald-600 text-white"
               : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
           }`}
           title="Bold"
@@ -88,9 +88,9 @@ export default function RichTextEditor({ value, onChange, placeholder, className
         <button
           type="button"
           onClick={toggleItalic}
-          className={`px-2 py-1.5 rounded text-sm font-semibold transition-colors ${
+          className={`min-w-9 min-h-9 px-2 py-1.5 rounded text-sm font-semibold transition-colors ${
             editor.isActive("italic")
-              ? "bg-blue-600 text-white"
+              ? "bg-emerald-600 text-white"
               : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
           }`}
           title="Italic"
@@ -100,9 +100,9 @@ export default function RichTextEditor({ value, onChange, placeholder, className
         <button
           type="button"
           onClick={toggleUnderline}
-          className={`px-2 py-1.5 rounded text-sm font-semibold transition-colors ${
+          className={`min-w-9 min-h-9 px-2 py-1.5 rounded text-sm font-semibold transition-colors ${
             editor.isActive("underline")
-              ? "bg-blue-600 text-white"
+              ? "bg-emerald-600 text-white"
               : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
           }`}
           title="Underline"
@@ -112,9 +112,9 @@ export default function RichTextEditor({ value, onChange, placeholder, className
         <button
           type="button"
           onClick={toggleStrike}
-          className={`px-2 py-1.5 rounded text-sm font-semibold transition-colors ${
+          className={`min-w-9 min-h-9 px-2 py-1.5 rounded text-sm font-semibold transition-colors ${
             editor.isActive("strike")
-              ? "bg-blue-600 text-white"
+              ? "bg-emerald-600 text-white"
               : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
           }`}
           title="Strikethrough"
@@ -125,9 +125,9 @@ export default function RichTextEditor({ value, onChange, placeholder, className
         <button
           type="button"
           onClick={toggleBulletList}
-          className={`px-2 py-1.5 rounded text-sm transition-colors ${
+          className={`min-w-9 min-h-9 px-2 py-1.5 rounded text-sm transition-colors ${
             editor.isActive("bulletList")
-              ? "bg-blue-600 text-white"
+              ? "bg-emerald-600 text-white"
               : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
           }`}
           title="Bullet List"
@@ -150,9 +150,9 @@ export default function RichTextEditor({ value, onChange, placeholder, className
         <button
           type="button"
           onClick={toggleOrderedList}
-          className={`px-2 py-1.5 rounded text-sm transition-colors ${
+          className={`min-w-9 min-h-9 px-2 py-1.5 rounded text-sm transition-colors ${
             editor.isActive("orderedList")
-              ? "bg-blue-600 text-white"
+              ? "bg-emerald-600 text-white"
               : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
           }`}
           title="Numbered List"
@@ -220,6 +220,11 @@ export default function RichTextEditor({ value, onChange, placeholder, className
         }
         .ProseMirror s {
           text-decoration: line-through;
+        }
+        @media (max-width: 639px) {
+          .ProseMirror {
+            min-height: 160px;
+          }
         }
       `}</style>
     </div>

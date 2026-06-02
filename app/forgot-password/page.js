@@ -39,18 +39,18 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="page-bg min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="auth-page page-bg">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(5,150,105,0.12),_transparent_50%)]" aria-hidden="true"></div>
-      <div className="max-w-md w-full relative z-10">
-        <div className="auth-card p-8">
-          <div className="text-center mb-8">
-            <div className="icon-box w-14 h-14 mb-4 mx-auto">
+      <div className="auth-container">
+        <div className="auth-card auth-card-padding">
+          <div className="auth-header">
+            <div className="auth-brand-icon icon-box">
               <SparklesIcon className="text-white text-2xl" />
             </div>
-            <h1 className="text-3xl font-bold gradient-text mb-2">
+            <h1 className="auth-title gradient-text">
               Forgot Password
             </h1>
-            <p className="text-stone-600">
+            <p className="auth-subtitle text-sm sm:text-base">
               Enter your email address and we&apos;ll send you a link to reset your password.
             </p>
           </div>
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
               </Link>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="auth-form">
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-2 flex items-center gap-2">
                   <FiMail className="text-emerald-600" />
@@ -79,6 +79,7 @@ export default function ForgotPasswordPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  autoComplete="email"
                   className="input-field"
                   placeholder="you@example.com"
                 />
@@ -103,7 +104,7 @@ export default function ForgotPasswordPage() {
             </form>
           )}
 
-          <div className="mt-6 text-center">
+          <div className="auth-footer">
             <Link
               href="/login"
               className="inline-flex items-center gap-2 text-sm text-emerald-600 hover:text-emerald-700 font-medium"

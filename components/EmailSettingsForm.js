@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FiEye, FiEyeOff, FiSave, FiShield } from "react-icons/fi";
 
 const defaultFormState = {
   smtpHost: "",
@@ -9,6 +10,7 @@ const defaultFormState = {
   smtpPass: "",
   fromName: "",
   fromEmail: "",
+  secure: false,
 };
 
 export default function EmailSettingsForm() {
@@ -18,6 +20,7 @@ export default function EmailSettingsForm() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("info");
   const [userEmail, setUserEmail] = useState("");
+  const [showSmtpPassword, setShowSmtpPassword] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -38,6 +41,7 @@ export default function EmailSettingsForm() {
           smtpPass: existing.smtpPass || "",
           fromName: existing.fromName || data?.user?.name || "",
           fromEmail: existing.fromEmail || data?.user?.email || "",
+          secure: Boolean(existing.secure),
         });
       } catch (err) {
         console.error("Failed to load profile:", err);
@@ -98,8 +102,8 @@ export default function EmailSettingsForm() {
   const inputStyle = "input-field";
 
   return (
-    <section className="card mx-auto max-w-3xl p-6">
-      <p className="text-sm text-stone-600">
+    <section className="card mx-auto max-w-3xl settings-card-padding">
+      <p className="text-sm text-stone-600 leading-relaxed">
         Configure SMTP credentials so the app can send emails from your account (
         {userEmail || "your account"}). Use a provider like Gmail/SendGrid, then
         paste the host, username, password, and the name/email that should appear
@@ -118,7 +122,7 @@ export default function EmailSettingsForm() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
           <label className={infoLabelStyle} htmlFor="smtpHost">
             SMTP Host
@@ -131,6 +135,7 @@ export default function EmailSettingsForm() {
             value={form.smtpHost}
             onChange={handleChange}
             disabled={loading}
+            autoComplete="url"
             className={inputStyle}
           />
         </div>
@@ -149,11 +154,12 @@ export default function EmailSettingsForm() {
             value={form.smtpPort}
             onChange={handleChange}
             disabled={loading}
+            inputMode="numeric"
             className={inputStyle}
           />
         </div>
 
-        <div>
+        <div className="sm:col-span-2">
           <label className={infoLabelStyle} htmlFor="smtpUser">
             SMTP Username
           </label>
@@ -165,24 +171,36 @@ export default function EmailSettingsForm() {
             value={form.smtpUser}
             onChange={handleChange}
             disabled={loading}
+            autoComplete="username"
             className={inputStyle}
           />
         </div>
 
-        <div>
+        <div className="sm:col-span-2">
           <label className={infoLabelStyle} htmlFor="smtpPass">
             SMTP Password (app password if required)
           </label>
-          <input
-            id="smtpPass"
-            name="smtpPass"
-            type="password"
-            required
-            value={form.smtpPass}
-            onChange={handleChange}
-            disabled={loading}
-            className={inputStyle}
-          />
+          <div className="relative">
+            <input
+              id="smtpPass"
+              name="smtpPass"
+              type={showSmtpPassword ? "text" : "password"}
+              required
+              value={form.smtpPass}
+              onChange={handleChange}
+              disabled={loading}
+              autoComplete="off"
+              className={`${inputStyle} input-field-with-action`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowSmtpPassword(!showSmtpPassword)}
+              className="password-toggle"
+              aria-label={showSmtpPassword ? "Hide SMTP password" : "Show SMTP password"}
+            >
+              {showSmtpPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
         <div>
@@ -196,6 +214,7 @@ export default function EmailSettingsForm() {
             value={form.fromName}
             onChange={handleChange}
             disabled={loading}
+            autoComplete="name"
             className={inputStyle}
           />
         </div>
@@ -212,25 +231,56 @@ export default function EmailSettingsForm() {
             value={form.fromEmail}
             onChange={handleChange}
             disabled={loading}
+            autoComplete="email"
             className={inputStyle}
           />
         </div>
 
 
-        <div>
+        <label className="sm:col-span-2 flex items-start gap-3 rounded-xl border border-stone-200 bg-stone-50 px-3 py-3 cursor-pointer">
+          <input
+            name="secure"
+            type="checkbox"
+            checked={form.secure}
+            onChange={handleChange}
+            disabled={loading}
+            className="mt-0.5 h-4 w-4 rounded border-stone-300 text-emerald-600 focus:ring-emerald-500"
+          />
+          <span>
+            <span className="flex items-center gap-2 text-sm font-semibold text-stone-800">
+              <FiShield className="text-emerald-600" />
+              Use a secure TLS connection
+            </span>
+            <span className="mt-1 block text-xs leading-relaxed text-stone-500">
+              Enable this when your SMTP provider requires an encrypted connection, commonly with port 465.
+            </span>
+          </span>
+        </label>
+
+        <div className="sm:col-span-2">
           <button
             type="submit"
             disabled={loading || saving}
-            className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {saving ? "Saving…" : "Save SMTP settings"}
+            <FiSave />
+            {saving ? "Saving..." : "Save SMTP settings"}
           </button>
         </div>
       </form>
 
-      <p className="mt-4 text-xs text-gray-500">
-        Gmail users: create an app password (https://support.google.com/accounts/answer/185833) and use it here. For other providers, double-check that the host,
-        port, and secure settings match what they recommend.
+      <p className="mt-4 text-xs leading-relaxed text-gray-500">
+        Gmail users: create an{" "}
+        <a
+          href="https://support.google.com/accounts/answer/185833"
+          target="_blank"
+          rel="noreferrer"
+          className="font-medium text-emerald-700 underline underline-offset-2"
+        >
+          app password
+        </a>{" "}
+        and use it here. For other providers, double-check that the host, port,
+        and secure settings match their documentation.
       </p>
     </section>
   );

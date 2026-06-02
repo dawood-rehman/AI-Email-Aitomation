@@ -67,22 +67,22 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="page-bg min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+    <div className="auth-page page-bg">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(5,150,105,0.12),_transparent_50%)]" aria-hidden="true"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.1),_transparent_50%)]" aria-hidden="true"></div>
-      <div className="max-w-md w-full relative z-10">
-        <div className="auth-card p-8">
-          <div className="text-center mb-8">
-            <div className="icon-box w-16 h-16 mb-4 mx-auto">
+      <div className="auth-container">
+        <div className="auth-card auth-card-padding">
+          <div className="auth-header">
+            <div className="auth-brand-icon icon-box">
               <SparklesIcon className="text-white text-3xl" />
             </div>
-            <h1 className="text-3xl font-bold gradient-text mb-2">
+            <h1 className="auth-title gradient-text">
               Create Account
             </h1>
-            <p className="text-stone-600">Sign up to get started</p>
+            <p className="auth-subtitle">Sign up to get started</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="auth-form">
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-2 flex items-center gap-2">
                 <FiUser className="text-emerald-600" />
@@ -94,6 +94,7 @@ export default function SignupPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
+                autoComplete="name"
                 className="input-field"
                 placeholder="John Doe"
               />
@@ -110,6 +111,7 @@ export default function SignupPage() {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                autoComplete="email"
                 className="input-field"
                 placeholder="you@example.com"
               />
@@ -128,13 +130,14 @@ export default function SignupPage() {
                   onChange={handleChange}
                   required
                   minLength={6}
-                  className="input-field pr-12"
-                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  className="input-field input-field-with-action"
+                  placeholder="Create a password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-700 focus:outline-none transition-colors"
+                  className="password-toggle"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
@@ -156,13 +159,14 @@ export default function SignupPage() {
                   onChange={handleChange}
                   required
                   minLength={6}
-                  className="input-field pr-12"
-                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  className="input-field input-field-with-action"
+                  placeholder="Confirm your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-700 focus:outline-none transition-colors"
+                  className="password-toggle"
                   aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                 >
                   {showConfirmPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
@@ -191,7 +195,7 @@ export default function SignupPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="auth-footer">
             <p className="text-sm text-stone-600">
               Already have an account?{" "}
               <Link

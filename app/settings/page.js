@@ -172,8 +172,8 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <main className="page-bg min-h-screen px-4 py-10">
-        <div className="mx-auto max-w-4xl">
+      <main className="settings-page page-bg">
+        <div className="settings-shell">
           <div className="text-center text-stone-600">
             <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
             Loading...
@@ -184,8 +184,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="page-bg min-h-screen px-4 py-10">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <main className="settings-page page-bg">
+      <div className="settings-shell space-y-5 sm:space-y-6">
         <div className="space-y-3">
           <Link
             href="/"
@@ -194,15 +194,15 @@ export default function SettingsPage() {
             <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
             <span>Back to dashboard</span>
           </Link>
-          <div className="flex items-center gap-3">
-            <div className="icon-box p-3">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="icon-box p-3 shrink-0">
               <FiSettings className="text-white text-2xl" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold gradient-text">
+              <h1 className="text-2xl sm:text-3xl font-bold gradient-text">
                 Settings
               </h1>
-              <p className="text-sm text-stone-600 mt-1">
+              <p className="text-sm text-stone-600 mt-1 leading-relaxed">
                 Manage your account settings, email, password, and SMTP configuration.
               </p>
             </div>
@@ -210,8 +210,8 @@ export default function SettingsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-stone-200 bg-white rounded-t-xl shadow-sm">
-          <nav className="-mb-px flex space-x-1 px-2">
+        <div className="settings-tabs border-b border-stone-200 bg-white rounded-t-xl shadow-sm">
+          <nav className="-mb-px flex w-max min-w-full space-x-1 px-2">
             {tabs.map((tab) => {
               const icons = {
                 profile: FiUser,
@@ -224,7 +224,7 @@ export default function SettingsPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`whitespace-nowrap border-b-2 px-4 py-4 text-sm font-medium transition-all flex items-center gap-2 ${
+                  className={`shrink-0 whitespace-nowrap border-b-2 px-3 sm:px-4 py-3.5 sm:py-4 text-sm font-medium transition-all flex items-center gap-2 ${
                     activeTab === tab.id
                       ? "tab-active"
                       : "border-transparent text-stone-500 hover:border-stone-300 hover:text-stone-700 hover:bg-stone-50"
@@ -240,12 +240,12 @@ export default function SettingsPage() {
 
         {/* Profile Tab */}
         {activeTab === "profile" && (
-          <section className="card rounded-t-none rounded-b-xl p-6">
+          <section className="card rounded-t-none rounded-b-xl settings-card-padding">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-emerald-100">
                 <FiUser className="text-emerald-600 text-xl" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                 Profile Information
               </h2>
             </div>
@@ -280,6 +280,7 @@ export default function SettingsPage() {
                     setProfileForm({ ...profileForm, name: e.target.value })
                   }
                   disabled={profileSaving}
+                  autoComplete="name"
                   className={inputStyle}
                 />
               </div>
@@ -309,12 +310,12 @@ export default function SettingsPage() {
 
         {/* Email Tab */}
         {activeTab === "email" && (
-          <section className="card rounded-t-none rounded-b-xl p-6">
+          <section className="card rounded-t-none rounded-b-xl settings-card-padding">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-violet-100">
                 <FiMail className="text-violet-600 text-xl" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                 Change Email Address
               </h2>
             </div>
@@ -350,6 +351,7 @@ export default function SettingsPage() {
                     setEmailForm({ ...emailForm, email: e.target.value })
                   }
                   disabled={emailSaving}
+                  autoComplete="email"
                   className={inputStyle}
                 />
               </div>
@@ -369,12 +371,14 @@ export default function SettingsPage() {
                       setEmailForm({ ...emailForm, password: e.target.value })
                     }
                     disabled={emailSaving}
-                    className={inputStyle}
+                    autoComplete="current-password"
+                    className={`${inputStyle} input-field-with-text-action`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowEmailPassword(!showEmailPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600 hover:text-gray-800"
+                    className="password-toggle-text"
+                    aria-label={showEmailPassword ? "Hide password" : "Show password"}
                   >
                     {showEmailPassword ? "Hide" : "Show"}
                   </button>
@@ -406,12 +410,12 @@ export default function SettingsPage() {
 
         {/* Password Tab */}
         {activeTab === "password" && (
-          <section className="card rounded-t-none rounded-b-xl p-6">
+          <section className="card rounded-t-none rounded-b-xl settings-card-padding">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-red-100">
                 <FiLock className="text-red-600 text-xl" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                 Change Password
               </h2>
             </div>
@@ -450,14 +454,16 @@ export default function SettingsPage() {
                       })
                     }
                     disabled={passwordSaving}
-                    className={inputStyle}
+                    autoComplete="current-password"
+                    className={`${inputStyle} input-field-with-text-action`}
                   />
                   <button
                     type="button"
                     onClick={() =>
                       setShowCurrentPassword(!showCurrentPassword)
                     }
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600 hover:text-gray-800"
+                    className="password-toggle-text"
+                    aria-label={showCurrentPassword ? "Hide password" : "Show password"}
                   >
                     {showCurrentPassword ? "Hide" : "Show"}
                   </button>
@@ -483,12 +489,14 @@ export default function SettingsPage() {
                       })
                     }
                     disabled={passwordSaving}
-                    className={inputStyle}
+                    autoComplete="new-password"
+                    className={`${inputStyle} input-field-with-text-action`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600 hover:text-gray-800"
+                    className="password-toggle-text"
+                    aria-label={showNewPassword ? "Hide password" : "Show password"}
                   >
                     {showNewPassword ? "Hide" : "Show"}
                   </button>
@@ -517,14 +525,16 @@ export default function SettingsPage() {
                       })
                     }
                     disabled={passwordSaving}
-                    className={inputStyle}
+                    autoComplete="new-password"
+                    className={`${inputStyle} input-field-with-text-action`}
                   />
                   <button
                     type="button"
                     onClick={() =>
                       setShowConfirmPassword(!showConfirmPassword)
                     }
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-600 hover:text-gray-800"
+                    className="password-toggle-text"
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                   >
                     {showConfirmPassword ? "Hide" : "Show"}
                   </button>

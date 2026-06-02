@@ -4,8 +4,8 @@ import { FiArrowLeft, FiMail } from "react-icons/fi";
 
 export default function EmailSettingsPage() {
   return (
-    <main className="page-bg min-h-screen px-4 py-10">
-      <div className="mx-auto max-w-4xl space-y-6">
+    <main className="settings-page page-bg">
+      <div className="settings-shell space-y-5 sm:space-y-6">
         <div className="space-y-3">
           <Link
             href="/"
@@ -14,15 +14,15 @@ export default function EmailSettingsPage() {
             <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
             <span>Back to dashboard</span>
           </Link>
-          <div className="flex items-center gap-3">
-            <div className="icon-box p-3">
+          <div className="flex items-start sm:items-center gap-3">
+            <div className="icon-box p-3 shrink-0">
               <FiMail className="text-white text-2xl" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold gradient-text">
+              <h1 className="text-2xl sm:text-3xl font-bold gradient-text">
                 Email & SMTP Settings
               </h1>
-              <p className="text-sm text-stone-600 mt-1">
+              <p className="text-sm text-stone-600 mt-1 leading-relaxed">
                 Configure the SMTP credentials that should be used whenever you send
                 mails. The application will always prefer these settings over any
                 shared defaults, so make sure the host, credentials, and from address
