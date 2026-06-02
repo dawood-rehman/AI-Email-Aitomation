@@ -105,18 +105,11 @@ export default function HomePage() {
   const [currentDraft, setCurrentDraft] = useState(null);
   const [sendStatus, setSendStatus] = useState("");
   const [smtpConfigError, setSmtpConfigError] = useState(null);
-  const [ccRecipients, setCcRecipients] = useState([]);
-  const selectedCcCount = useMemo(
-    () => ccRecipients.filter((contactId) => selectedContacts.includes(contactId)).length,
-    [ccRecipients, selectedContacts]
-  );
-  const hasSelectedCc = selectedCcCount > 0;
   const [isEditingDraft, setIsEditingDraft] = useState(false);
   const [editedDraft, setEditedDraft] = useState(null);
   const [isRestoringFromRedux, setIsRestoringFromRedux] = useState(false);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
-  const [isCcEnabled, setIsCcEnabled] = useState(true);
   const [deleteDialog, setDeleteDialog] = useState({
     open: false,
     contact: null,
@@ -154,7 +147,6 @@ export default function HomePage() {
 
   const clearContactSelection = useCallback(() => {
     setSelectedContacts([]);
-    setCcRecipients([]);
   }, []);
 
   // Try to auto-match a contact from the user's command so we can treat it as selected.
@@ -289,12 +281,9 @@ export default function HomePage() {
   }, [messages]);
 
   useEffect(() => {
-    setCcRecipients([]);
     setIsEditingDraft(false);
     setEditedDraft(null);
-    setIsCcEnabled(true);
   }, [currentDraft]);
-
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -355,35 +344,6 @@ export default function HomePage() {
     }
   };
 
-  const handleCcChange = (event) => {
-    const selectedOptions = Array.from(event.target.selectedOptions).map(
-      (option) => option.value
-    );
-    setCcRecipients(selectedOptions);
-  };
-
-  const toggleCcEnabled = () => {
-    setIsCcEnabled((prev) => {
-      const next = !prev;
-      if (!next) {
-        setCcRecipients([]);
-      }
-      return next;
-    });
-  };
-
-  const handleToggleCcRecipient = (contactId) => {
-    setCcRecipients((prev) =>
-      prev.includes(contactId)
-        ? prev.filter((id) => id !== contactId)
-        : [...prev, contactId]
-    );
-    if (!isCcEnabled) {
-      setIsCcEnabled(true);
-    }
-  };
-
-
   const handleDeleteContact = async (id) => {
     try {
       const updatedContacts = contacts.filter((contact) => contact._id !== id);
@@ -408,13 +368,6 @@ export default function HomePage() {
       setUploadError("Failed to delete selected contacts");
       setTimeout(() => setUploadError(""), 3000);
     }
-  };
-
-  const handleRemoveCcFromSelected = () => {
-    if (selectedContacts.length === 0) return;
-    setCcRecipients((prev) =>
-      prev.filter((contactId) => !selectedContacts.includes(contactId))
-    );
   };
 
   // Bulk email handlers
@@ -715,7 +668,6 @@ export default function HomePage() {
     setInputMessage("");
     setCurrentDraft(null);
     setSendStatus("");
-    setCcRecipients([]);
 
     // Check if contacts are selected (or implicitly referenced in the message)
     let selectedContactDetails = contacts.filter((contact) =>
@@ -728,7 +680,8 @@ export default function HomePage() {
         setSelectedContacts([implicitContact._id]);
       }
     }
-    const isBulkEmail = selectedContactDetails.length > 0;
+    const hasSelectedContacts = selectedContactDetails.length > 0;
+    const isMultiRecipient = selectedContactDetails.length > 1;
 
     // Add user message to chat
     setMessages((prev) => [
@@ -748,7 +701,7 @@ export default function HomePage() {
         ...prev,
         {
           role: "assistant",
-          content: isBulkEmail
+          content: hasSelectedContacts
             ? `Generating email for ${selectedContactDetails.length} selected contact${selectedContactDetails.length !== 1 ? "s" : ""}...`
             : "Let me generate that email for you...",
           isLoading: true,
@@ -757,16 +710,16 @@ export default function HomePage() {
       ]);
 
       // For bulk emails, pass selected contacts to the API
-      const requestBody = isBulkEmail && selectedContactDetails.length > 0
-        ? { 
+      const requestBody = hasSelectedContacts
+        ? {
             command: userMessage,
-            selectedContacts: selectedContactDetails.map(c => ({
+            selectedContacts: selectedContactDetails.map((c) => ({
               _id: c._id,
               name: c.name,
               email: c.email,
               role: c.role || null,
               department: c.department || null,
-            }))
+            })),
           }
         : { command: userMessage };
 
@@ -797,8 +750,8 @@ export default function HomePage() {
         // Add bulk email info to draft
         const draftData = {
           ...data,
-          isBulk: isBulkEmail,
-          selectedContacts: isBulkEmail ? selectedContactDetails : null,
+          isBulk: isMultiRecipient,
+          selectedContacts: hasSelectedContacts ? selectedContactDetails : null,
         };
 
         setCurrentDraft(draftData);
@@ -806,11 +759,13 @@ export default function HomePage() {
           ...prev,
           {
             role: "assistant",
-            content: isBulkEmail
-              ? `I've prepared an email for ${selectedContactDetails.length} selected contact${selectedContactDetails.length !== 1 ? "s" : ""}. Please review it below and click "Send Email" when ready.`
-              : `I've prepared an email for ${
-              data.employee?.name || data.contact?.name || "the recipient"
-            }. Please review it below and click "Send Email" when ready.`,
+            content: isMultiRecipient
+              ? `I've prepared a group email for ${selectedContactDetails.length} contacts (no individual names in the template). Each person will get a personalized greeting when sent. Please review below.`
+              : hasSelectedContacts
+                ? `I've prepared an email for ${data.employee?.name || selectedContactDetails[0]?.name || "the recipient"}. Please review it below and click "Send Email" when ready.`
+                : `I've prepared an email for ${
+                    data.employee?.name || data.contact?.name || "the recipient"
+                  }. Please review it below and click "Send Email" when ready.`,
             timestamp: new Date(),
             draft: draftData,
           },
@@ -874,102 +829,22 @@ export default function HomePage() {
     );
   };
 
-  const renderCcSelector = () => {
-    if (!currentDraft) return null;
-
-    const hasMultipleRecipients =
-      currentDraft.selectedContacts &&
-      currentDraft.selectedContacts.length > 1;
-
-    if (hasMultipleRecipients) {
-      return null;
-    }
-    const primaryRecipientEmails = currentDraft.isBulk && currentDraft.selectedContacts
-      ? new Set(currentDraft.selectedContacts.map((c) => c.email))
-      : new Set(
-          [currentDraft.employee?.email, currentDraft.contact?.email, currentDraft.to]
-            .filter(Boolean)
-        );
-
-    const availableContacts = contacts.filter(
-      (contact) =>
-        contact.email &&
-        !primaryRecipientEmails.has(contact.email)
-    );
-
-    return (
-      <div className="mb-4">
-        <div className="flex items-center justify-between gap-3">
-          <span className="font-medium text-gray-600">CC:</span>
-          <label className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
-            <input
-              type="checkbox"
-              checked={isCcEnabled}
-              onChange={toggleCcEnabled}
-              className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-2 focus:ring-emerald-500"
-            />
-            Enable CC
-          </label>
-        </div>
-        <div className="mt-2">
-          {!isCcEnabled ? (
-            <span className="text-gray-500 text-xs sm:text-sm">
-              CC is disabled.
-            </span>
-          ) : availableContacts.length === 0 ? (
-            <span className="text-gray-500">
-              No other contacts available
-            </span>
-          ) : (
-            <>
-              <select
-                multiple
-                value={ccRecipients}
-                onChange={handleCcChange}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 sm:py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white min-h-[44px]"
-              >
-                {availableContacts.map((contact) => (
-                  <option key={contact._id} value={contact._id}>
-                    {contact.name} ({contact.email})
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-gray-500 mt-1">
-                Hold Ctrl/Cmd to select multiple recipients.
-              </p>
-              {ccRecipients.length > 0 && (
-                <p className="text-xs text-gray-600 mt-2">
-                  Selected:{" "}
-                  {contacts
-                    .filter((contact) => ccRecipients.includes(contact._id))
-                    .map((contact) => contact.name)
-                    .join(", ")}
-                </p>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-
   const handleSendEmail = async () => {
     if (!currentDraft) return;
     setSendStatus("Sending...");
     setSmtpConfigError(null);
 
     // Check if this is a bulk email
-    if (currentDraft.isBulk && currentDraft.selectedContacts && currentDraft.selectedContacts.length > 0) {
-      const uniqueContactNames = Array.from(
-        new Set(
-          currentDraft.selectedContacts
-            .map((contact) => contact.name?.trim())
-            .filter(Boolean)
-        )
-      );
-
-      const greetingRegex = /(Dear|Hello|Hi)\s+[^\r\n<,]+/gi;
+    if (
+      currentDraft.isBulk &&
+      currentDraft.selectedContacts &&
+      currentDraft.selectedContacts.length > 1
+    ) {
+      const personalizeGreeting = (html, recipientName) =>
+        html.replace(
+          /(Dear|Hello|Hi|Greetings)(\s+[^<\r\n,]+)?,?\s*/i,
+          `Dear ${recipientName}, `
+        );
 
       // Send to multiple recipients
       let successCount = 0;
@@ -982,38 +857,10 @@ export default function HomePage() {
             contact.name?.trim() ||
             contact.email?.trim() ||
             "Recipient";
-          let personalizedBody = currentDraft.body_html;
-
-          // Replace the greeting with the current recipient's name
-          personalizedBody = personalizedBody.replace(
-            greetingRegex,
-            (_, greeting) => `${greeting} ${recipientName}`
+          const personalizedBody = personalizeGreeting(
+            currentDraft.body_html,
+            recipientName
           );
-
-          const otherNames = uniqueContactNames.filter(
-            (name) => name.toLowerCase() !== recipientName.toLowerCase()
-          );
-
-          if (otherNames.length > 0) {
-            const namePattern = otherNames
-              .map((name) => escapeRegExp(name))
-              .filter(Boolean)
-              .join("|");
-
-            if (namePattern) {
-              const namesRegex = new RegExp(`\\b(${namePattern})\\b`, "gi");
-              personalizedBody = personalizedBody.replace(
-                namesRegex,
-                recipientName
-              );
-            }
-          }
-
-          // Get CC emails if enabled
-          const ccContacts = isCcEnabled
-            ? contacts.filter((c) => ccRecipients.includes(c._id))
-            : [];
-          const ccEmails = ccContacts.map((c) => c.email);
 
           const payload = {
             to: contact.email,
@@ -1021,10 +868,6 @@ export default function HomePage() {
             body_html: personalizedBody,
             recipientName,
           };
-
-          if (ccEmails.length > 0) {
-            payload.cc = ccEmails;
-          }
 
           const res = await fetch("/api/email/send", {
             method: "POST",
@@ -1078,26 +921,24 @@ export default function HomePage() {
       }
     } else {
       // Send to single recipient
-      const ccContacts = isCcEnabled
-        ? contacts.filter((contact) => ccRecipients.includes(contact._id))
-        : [];
-    const ccEmails = ccContacts.map((contact) => contact.email);
+      const singleContact = currentDraft.selectedContacts?.[0];
       const recipientName =
         currentDraft.employee?.name ||
+        singleContact?.name ||
         currentDraft.contact?.name ||
         currentDraft.toName ||
         "Recipient";
 
     const payload = {
-        to: currentDraft.employee?.email || currentDraft.contact?.email || currentDraft.to,
+        to:
+          currentDraft.employee?.email ||
+          singleContact?.email ||
+          currentDraft.contact?.email ||
+          currentDraft.to,
       subject: currentDraft.subject,
       body_html: currentDraft.body_html,
         recipientName,
     };
-
-    if (ccEmails.length) {
-      payload.cc = ccEmails;
-    }
 
     try {
       const res = await fetch("/api/email/send", {
@@ -1448,17 +1289,6 @@ export default function HomePage() {
                       >
                         Delete Selected
                       </button>
-                      <button
-                        onClick={handleRemoveCcFromSelected}
-                        disabled={!hasSelectedCc}
-                        className={`text-xs sm:text-sm font-medium px-2 py-1 rounded transition-colors ${
-                          hasSelectedCc
-                            ? "text-emerald-600 bg-emerald-50 border border-emerald-100 hover:bg-emerald-100"
-                            : "text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed"
-                        }`}
-                      >
-                        Remove CC
-                      </button>
                     </div>
                   )}
                 </div>
@@ -1744,19 +1574,6 @@ export default function HomePage() {
                             {contact.email}
                               </div>
                             </div>
-                            <label
-                              onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-gray-500 cursor-pointer select-none"
-                              title="Mark as CC recipient"
-                            >
-                              <input
-                                type="checkbox"
-                                className="appearance-none w-3.5 h-3.5 border border-gray-300 rounded-full checked:bg-violet-600 checked:border-violet-600 transition-colors"
-                                checked={ccRecipients.includes(contact._id)}
-                                onChange={() => handleToggleCcRecipient(contact._id)}
-                              />
-                              CC
-                            </label>
                           </div>
                           {contact.identification && (
                               <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
@@ -1942,8 +1759,6 @@ export default function HomePage() {
                           </div>
                         </div>
 
-                        {renderCcSelector()}
-
                         <div className="mb-4">
                           <label className="block font-medium text-gray-600 mb-2 text-xs sm:text-sm">
                             Body:
@@ -2009,8 +1824,6 @@ export default function HomePage() {
                             </span>
                           </div>
                         </div>
-
-                        {renderCcSelector()}
 
                         <div className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 mb-4 max-h-48 sm:max-h-60 overflow-y-auto">
                           <div
