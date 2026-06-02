@@ -1052,7 +1052,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-violet-600 bg-clip-text text-transparent">
-                    AI Email Marketing
+                    AI Email Automation
                   </h1>
                   <p className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1 flex items-center gap-1">
                     <FiMail className="text-xs" />
@@ -1674,7 +1674,7 @@ export default function HomePage() {
                   </div>
                     <div className="min-w-0">
                       <h2 className="text-base sm:text-lg font-semibold text-gray-800 truncate">
-                        AI Email Marketing
+                        AI Email Automation
                       </h2>
                       <p className="text-xs text-gray-500">Crafting thoughtful communication in seconds</p>
                 </div>
