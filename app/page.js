@@ -16,7 +16,6 @@ import {
 } from "@/store/emailDraftSlice";
 import { FiSettings, FiLogOut, FiUser, FiMail, FiUsers, FiSend, FiEdit, FiX, FiSave, FiCheck } from "react-icons/fi";
 import { HiOutlineSparkles } from "react-icons/hi";
-import { MdOutlineEmail } from "react-icons/md";
 
 const generateId = () => {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
